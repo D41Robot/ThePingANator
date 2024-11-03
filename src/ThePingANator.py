@@ -1,3 +1,4 @@
+#Goal is to get the group labels working correctly. Extra print logs were added to help figure out what row items were assigned to
 from concurrent.futures import thread
 import tkinter as tk
 import time
@@ -193,11 +194,11 @@ class App(tk.Tk):
         print("Group name: " + "START PING" + " at row: " + str(len(user_inputs)+(len(group_names)*1)+2))
 
         #Group Labels
-        #Still a work in progress, comment below to disable
-        #for x in range(len(group_names)):
-        #    group_label[x] = tk.Label(master=self, text=group_names[x], bg='pink', fg='black')
-        #    group_label[x].grid(column=0, row=x+(group_row_spacing(x)*1)+1, columnspan=len(column_headers), sticky=tk.NS, padx=global_padx, pady=global_pady)
-        #    print("Group name: " + group_names[x] + " at row: " + str(x+(group_row_spacing(x)*1)+1))
+        #Still a work in progress, comment out below to disable
+        for x in range(len(group_names)):
+            group_label[x] = tk.Label(master=self, text=group_names[x], bg='pink', fg='black')
+            group_label[x].grid(column=0, row=x+(group_row_spacing(x)*1)+1, columnspan=len(column_headers), sticky=tk.NS, padx=global_padx, pady=global_pady)
+            print("Group name: " + group_names[x] + " at row: " + str(x+(group_row_spacing(x)*1)+1))
 
 if __name__ == "__main__":
     app = App()
