@@ -130,7 +130,7 @@ class App(tk.Tk):
                 print("YEET, TAKE THE WHEEL")
                 quit()
 
-            while not update_queue.empty():
+            while not update_queue.empty() and control_state == 1:
                 index, status_text, color = update_queue.get()
                 my_indicator[index].config(text=status_text, bg=color)
 
