@@ -18,8 +18,8 @@ Group: Way to break up the GUI into sections
 There is 3 control buttons offered in the application
 
 START PING:
-    Start the ping process
-    Changes APP_STAUTS to green
+    Start the ping process  
+    Changes APP_STAUTS to green  
 
 STOP PING:
     Stops the ping process but keeps the application running so it can be started again, IDLE state  
@@ -28,8 +28,8 @@ STOP PING:
 
 EXIT: 
     Stops the application
-    Changes APP_STATUS to red
-    Note: may take a few seconds to close as residual pings finish
+    Changes APP_STATUS to red  
+    Note: may take a few seconds to close as residual pings finish  
 
 # PING STATUS Explincation
 Response of 
@@ -46,17 +46,17 @@ ERROR: Something really bad happened to the ping subprocesses
 There is 4 main states of the GUI indicated by the color of the APP STATUS box
 
 White:
-    Application just started
+    Application just started  
     ![white](/Photos/WHITE.png)
 
 Green:
-    Appplication is pining devices
+    Appplication is pining devices  
     ![green](/Photos/GREEN.png)
 
 Yellow
-    Application is in the IDLE state
+    Application is in the IDLE state  
     ![yellow](/Photos/YELLOW.png)
 
 Red
-    Appliation is in the process of shutting down
+    Appliation is in the process of shutting down  
     ![red](/Photos/RED.png)
