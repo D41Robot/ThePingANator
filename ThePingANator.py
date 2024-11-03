@@ -98,6 +98,7 @@ def ping_address_subprocess(address, index):
         update_queue.put((index, "ERROR", 'orange'))
 
 #Group Spacing Function
+#TO BE FIGURED OUT
 def group_row_spacing(name):
     return name
 
