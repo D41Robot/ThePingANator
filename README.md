@@ -25,7 +25,7 @@ START PING:
 STOP PING:
     Stops the ping process but keeps the application running so it can be started again, IDLE state  
     Changes APP_STAUTS to yellow  
-    Note: Returns all status to IDLE  
+    Note: Returns all PING STATUS to IDLE  
 
 EXIT: 
     Stops the application

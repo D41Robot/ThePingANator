@@ -1,6 +1,6 @@
+from concurrent.futures import thread
 import tkinter as tk
 import time
-from xmlrpc.client import boolean
 from ping3 import ping, verbose_ping
 import datetime
 import threading
@@ -26,10 +26,20 @@ user_inputs = [
 ]
 
 #Group Labels
-#Positions relates to Group in user_inputer
+#Positions relates to Group value in user_inputs
 group_names = ['Internal', 'External']
 
-#DONE WITH COMMON USER INPUTS
+#GUI behavior settings
+#Glogal font and size for labels
+global_font = "tkDefaeultFont"
+global_font_size = 10
+#How often the GUI refreshes in seconds
+refresh_rate = 0.5
+#Controls paddinding for tkinter
+global_padx = 5
+global_pady = 5
+
+#DONE WITH USER INPUTS
 
 #IDK If you want to change what it says on the top
 column_headers = ['NAME', 'ADDRESS', 'PING STATUS']
@@ -42,18 +52,12 @@ label_addresses = [None] * len(user_inputs)
 label_names = [None] * len(user_inputs)
 column_headers_labels = [None] * len(column_headers)
 group_label = [None] * len(group_names)
-app_stats = [None,None, None]
-#Glogal font for item
-global_font = ""
-global_font_size = 10
+app_stats = [None,None,None]
+
 #Main state machine value
 control_state = 0
-#How often the GUI refreshes in seconds
-refresh_rate = 0.5
-#Controls paddinding for tkinter
-global_padx = 5
-global_pady = 5
-#Not 100% sure but it works
+
+#Not 100% sure what you do but it works
 update_queue = queue.Queue()
 
 #Conbtrol functions
@@ -73,7 +77,7 @@ def exit_app():
     global control_state
     control_state = 2
     app_stats[0].config(bg='red')
-    print("QUIT STARTED")
+    print("QUIT ENTERED")
 
 #Clock function
 def update_clock():
@@ -113,7 +117,7 @@ class App(tk.Tk):
         #Create Canvas and basic elements
         self.create_widgets()
 
-        #What does really everything
+        #What does everything
         while(1):
             if(control_state == 1):
                 for x in range(len(user_inputs)):
@@ -132,6 +136,7 @@ class App(tk.Tk):
             else:
                 print("YEET, TAKE THE WHEEL")
                 quit()
+
 
             while not update_queue.empty() and control_state == 1:
                 index, status_text, color = update_queue.get()
@@ -171,7 +176,7 @@ class App(tk.Tk):
         #App Status Stuff
         app_stats[0] = tk.Label(master=self, text="APP STATUS", font=(global_font, global_font_size), bg='white',fg='black')
         app_stats[0].grid(column=0,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
-        app_stats[1] = tk.Label(master=self, text="Last update time: ", font=(global_font, global_font_size), bg='white',fg='black')
+        app_stats[1] = tk.Label(master=self, text="Last update time:", font=(global_font, global_font_size), bg='white',fg='black')
         app_stats[1].grid(column=1,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
         app_stats[2] = tk.Label(master=self, text=datetime.datetime.now().strftime("%H:%M:%S.%f"), font=(global_font, global_font_size), bg='cyan',fg='black')
         app_stats[2].grid(column=2,row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
