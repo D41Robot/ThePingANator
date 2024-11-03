@@ -42,7 +42,7 @@ label_addresses = [None] * len(user_inputs)
 label_names = [None] * len(user_inputs)
 column_headers_labels = [None] * len(column_headers)
 group_label = [None] * len(group_names)
-clock_label = [None,None]
+app_stats = [None,None, None]
 #Main state machine value
 control_state = 0
 #How often the GUI refreshes in seconds
@@ -57,19 +57,19 @@ update_queue = queue.Queue()
 def start_indicators():
     global control_state
     control_state = 1
-    clock_label[0].config(bg='green')
+    app_stats[0].config(bg='green')
     print("START PING")
 
 def stop_indicators():
     global control_state
     control_state = 0
-    clock_label[0].config(bg='yellow')
+    app_stats[0].config(bg='yellow')
     print("STOP PING")
 
 def exit_app():
     global control_state
     control_state = 2
-    clock_label[0].config(bg='red')
+    app_stats[0].config(bg='red')
     print("QUIT STARTED")
 
 #Clock function
@@ -77,10 +77,9 @@ def update_clock():
     # get current time as text
     current_time = datetime.datetime.now().strftime("%H:%M:%S")
     
-    # udpate text in Label
-    clock_label[1].config(text=current_time)
-    #lab['text'] = current_time
-
+    # udpate text in clock Label
+    app_stats[2].config(text=current_time)
+   
 #ping fuction
 def ping_address_subprocess(address, index):
     param = '-n' if platform.system().lower() == 'windows' else '-c'
@@ -165,11 +164,13 @@ class App(tk.Tk):
             my_indicator[x] = tk.Label(master=self, text="IDLE", bg='white', fg='Black')
             my_indicator[x].grid(column=2, row=x+user_inputs[x]["Group"]+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
 
-        #Clock Stuff
-        clock_label[0] = tk.Label(master=self, text="Last update time: ", bg='white',fg='black')
-        clock_label[0].grid(column=0,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
-        clock_label[1] = tk.Label(master=self, text=datetime.datetime.now().strftime("Time: %H:%M:%S%f"), bg='cyan',fg='black')
-        clock_label[1].grid(column=1,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=global_padx, pady=global_pady)
+        #App Status Stuff
+        app_stats[0] = tk.Label(master=self, text="APP STATUS", bg='white',fg='black')
+        app_stats[0].grid(column=0,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
+        app_stats[1] = tk.Label(master=self, text="Last update time: ", bg='white',fg='black')
+        app_stats[1].grid(column=1,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
+        app_stats[2] = tk.Label(master=self, text=datetime.datetime.now().strftime("%H:%M:%S.%f"), bg='cyan',fg='black')
+        app_stats[2].grid(column=2,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=global_padx, pady=global_pady)
         
         #Control buttons
         start_button = tk.Button(self, text="START PING", command=start_indicators) 
