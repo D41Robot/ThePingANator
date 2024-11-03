@@ -11,8 +11,9 @@ The following block can ben added to user_inputer for additional ping locations.
     },
 
 Name: What the item is called  
-Address: IP Address on the newtork   
+Address: IP Address that will be pingged 
 Group: Way to break up the GUI into sections  
+NOTE: Functionality currently not added
 
 # Application Use
 There is 3 control buttons offered in the application

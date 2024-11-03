@@ -43,6 +43,9 @@ label_names = [None] * len(user_inputs)
 column_headers_labels = [None] * len(column_headers)
 group_label = [None] * len(group_names)
 app_stats = [None,None, None]
+#Glogal font for item
+global_font = ""
+global_font_size = 10
 #Main state machine value
 control_state = 0
 #How often the GUI refreshes in seconds
@@ -143,42 +146,42 @@ class App(tk.Tk):
         #Create Canvas
         self.geometry()
         self.title(title_banner)
-        self.resizable(1, 1)
+        self.resizable(0, 0)
         
         #Create column heading
         for x in range(len(column_headers)):
-            column_headers_labels[x] = tk.Label(master=self, text=column_headers[x], bg='white', fg='black')
+            column_headers_labels[x] = tk.Label(master=self, text=column_headers[x], font=(global_font, global_font_size), bg='white', fg='black')
             column_headers_labels[x].grid(column=x, row=0, sticky=tk.NS, padx=global_padx, pady=global_pady)
 
         #Create labels for the names of what is getting pingged
         for x in range(len(user_inputs)):
-            label_names[x] = tk.Label(self, text=user_inputs[x]["Name"], bg='white',fg='black')
+            label_names[x] = tk.Label(self, text=user_inputs[x]["Name"], font=(global_font, global_font_size), bg='white',fg='black')
             label_names[x].grid(column=0, row=x+user_inputs[x]["Group"]+2, sticky=tk.W, padx=global_padx, pady=global_pady)
             
         #Create lebels with address of what is getting pingged
         for x in range(len(my_indicator)):
-            label_addresses[x] = tk.Label(self, text=user_inputs[x]["Address"], bg='white',fg='black')
+            label_addresses[x] = tk.Label(self, text=user_inputs[x]["Address"], font=(global_font, global_font_size), bg='white',fg='black')
             label_addresses[x].grid(column=1, row=x+user_inputs[x]["Group"]+2, sticky=tk.W, padx=global_padx, pady=global_pady)
 
         #Create items that will be updated based on ping status, default state
         for x in range(len(my_indicator)):
-            my_indicator[x] = tk.Label(master=self, text="IDLE", bg='white', fg='Black')
+            my_indicator[x] = tk.Label(master=self, text="IDLE", font=(global_font, global_font_size), bg='white', fg='Black')
             my_indicator[x].grid(column=2, row=x+user_inputs[x]["Group"]+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
 
         #App Status Stuff
-        app_stats[0] = tk.Label(master=self, text="APP STATUS", bg='white',fg='black')
+        app_stats[0] = tk.Label(master=self, text="APP STATUS", font=(global_font, global_font_size), bg='white',fg='black')
         app_stats[0].grid(column=0,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
-        app_stats[1] = tk.Label(master=self, text="Last update time: ", bg='white',fg='black')
+        app_stats[1] = tk.Label(master=self, text="Last update time: ", font=(global_font, global_font_size), bg='white',fg='black')
         app_stats[1].grid(column=1,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=5, pady=5)
-        app_stats[2] = tk.Label(master=self, text=datetime.datetime.now().strftime("%H:%M:%S.%f"), bg='cyan',fg='black')
-        app_stats[2].grid(column=2,row=len(user_inputs)+len(group_names)+2, sticky=tk.W, padx=global_padx, pady=global_pady)
+        app_stats[2] = tk.Label(master=self, text=datetime.datetime.now().strftime("%H:%M:%S.%f"), font=(global_font, global_font_size), bg='cyan',fg='black')
+        app_stats[2].grid(column=2,row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
         
         #Control buttons
-        start_button = tk.Button(self, text="START PING", command=start_indicators) 
+        start_button = tk.Button(self, text="START PING", font=(global_font, global_font_size), command=start_indicators) 
         start_button.grid(column=0, row=len(my_indicator)+len(group_names)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
-        stop_button = tk.Button(self, text="STOP PING", command=stop_indicators)   
+        stop_button = tk.Button(self, text="STOP PING", font=(global_font, global_font_size), command=stop_indicators)   
         stop_button.grid(column=1, row=len(my_indicator)+len(group_names)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
-        exit_button = tk.Button(self, text="EXIT", command=exit_app) 
+        exit_button = tk.Button(self, text="EXIT", font=(global_font, global_font_size), command=exit_app) 
         exit_button.grid(column=2, row=len(my_indicator)+len(group_names)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
 
         #Somehow we make different sections happen here
