@@ -10,9 +10,9 @@ The following block can ben added to user_inputer for additional ping locations.
         "Group": 0,
     },
 
-    Name: What the item is called,
-    Address: IP Address on the newtork, 
-    Group: Way to break up the GUI into sections
+Name: What the item is called,
+Address: IP Address on the newtork, 
+Group: Way to break up the GUI into sections
 
 # Application Use
 There is 3 control buttons offered in the application
