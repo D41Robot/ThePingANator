@@ -45,6 +45,8 @@ group_label = [None] * len(group_names)
 clock_label = [None,None]
 #Main state machine value
 control_state = 0
+#How often the GUI refreshes in seconds
+refresh_rate = 0.5
 #Controls paddinding for tkinter
 global_padx = 5
 global_pady = 5
@@ -68,8 +70,7 @@ def exit_app():
     global control_state
     control_state = 2
     clock_label[0].config(bg='red')
-    print("QUIT")
-    quit()
+    print("QUIT STARTED")
 
 #Clock function
 def update_clock():
@@ -122,7 +123,7 @@ class App(tk.Tk):
                 print("GUI Default")
 
             elif(control_state == 2):
-                print("QUIT")
+                print("QUITTING FOR REAL")
                 quit()
 
             else:
@@ -136,7 +137,7 @@ class App(tk.Tk):
             update_clock()   
             self.update()  # Update the complete GUI.
             print("Panel Loop Complete")
-            time.sleep(0.5)
+            time.sleep(refresh_rate)
 
     def create_widgets(self):
         #Create Canvas
