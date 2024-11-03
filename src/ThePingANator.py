@@ -1,4 +1,3 @@
-#Goal is to get the group labels working correctly. Extra print logs were added to help figure out what row items were assigned to
 from concurrent.futures import thread
 import tkinter as tk
 import time
@@ -163,19 +162,15 @@ class App(tk.Tk):
             column_headers_labels[x] = tk.Label(master=self, text=column_headers[x], font=(global_font, global_font_size), bg='white', fg='black')
             column_headers_labels[x].grid(column=x, row=0, sticky=tk.NS, padx=global_padx, pady=global_pady)
             
-        #Create labels for the names of what is getting pingged
-        for x in range(len(user_inputs)):
+        #Create each label for user_inputs
+        for x in range(len(user_inputs)): #Create labels for the names of what is getting pingged
             label_names[x] = tk.Label(self, text=user_inputs[x]["Name"], font=(global_font, global_font_size), bg='white',fg='black')
             label_names[x].grid(column=0, row=x+(user_inputs[x]["Group"]*2+2), sticky=tk.W, padx=global_padx, pady=global_pady)
             print("Group name: " + user_inputs[x]["Name"] + " at row: " + str(x+(user_inputs[x]["Group"]*2+2)))
-            
-        #Create lebels with address of what is getting pingged
-        for x in range(len(my_indicator)):
+        for x in range(len(my_indicator)): #Create lebels with address of what is getting pingged
             label_addresses[x] = tk.Label(self, text=user_inputs[x]["Address"], font=(global_font, global_font_size), bg='white',fg='black')
             label_addresses[x].grid(column=1, row=x+(user_inputs[x]["Group"]*2+2), sticky=tk.W, padx=global_padx, pady=global_pady)
-
-        #Create items that will be updated based on ping status, default state
-        for x in range(len(my_indicator)):
+        for x in range(len(my_indicator)): #Create items that will be updated based on ping status, default state
             my_indicator[x] = tk.Label(master=self, text="IDLE", font=(global_font, global_font_size), bg='white', fg='Black')
             my_indicator[x].grid(column=2, row=x+(user_inputs[x]["Group"]*2+2), sticky=tk.NS, padx=global_padx, pady=global_pady)
 
@@ -197,12 +192,12 @@ class App(tk.Tk):
         exit_button.grid(column=2, row=len(my_indicator)+(len(group_names)*1)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
         print("Group name: " + "START PING" + " at row: " + str(len(user_inputs)+(len(group_names)*1)+2))
 
-        #Somehow we make different sections happen here
-        #Disabled Group labels until we can find a way to make it work
-        for x in range(len(group_names)):
-            group_label[x] = tk.Label(master=self, text=group_names[x], bg='pink', fg='black')
-            group_label[x].grid(column=0, row=x+(group_row_spacing(x)*1)+1, columnspan=len(column_headers), sticky=tk.NS, padx=global_padx, pady=global_pady)
-            print("Group name: " + group_names[x] + " at row: " + str(x+(group_row_spacing(x)*1)+1))
+        #Group Labels
+        #Still a work in progress, comment below to disable
+        #for x in range(len(group_names)):
+        #    group_label[x] = tk.Label(master=self, text=group_names[x], bg='pink', fg='black')
+        #    group_label[x].grid(column=0, row=x+(group_row_spacing(x)*1)+1, columnspan=len(column_headers), sticky=tk.NS, padx=global_padx, pady=global_pady)
+        #    print("Group name: " + group_names[x] + " at row: " + str(x+(group_row_spacing(x)*1)+1))
 
 if __name__ == "__main__":
     app = App()
