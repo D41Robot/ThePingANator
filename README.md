@@ -1,7 +1,7 @@
 # ThePingANator
 Tool designed to ping multiple targets on a single process instead of multiple terminals opened at the same time.
 
-# Add Ping Locaions
+# Add Ping Locaion(s)
 The following block can ben added to user_inputer for additional ping locations.
 
     {
@@ -12,8 +12,27 @@ The following block can ben added to user_inputer for additional ping locations.
 
 Name: What the item is called  
 Address: IP Address that will be pingged 
-Group: Way to break up the GUI into sections  
-NOTE: Functionality currently not added
+Group: Way to break up the GUI into sections. Value comes from the intended group position if group_names
+
+# Add Group(s)
+Groups can be used to break up the GUI with different section. Additional elements can be added for groups. Item index number is associated with with ping location will fall under that tag.
+
+    group_names = ['Internal', 'External']
+
+# GUI Behvaior Settings
+The following settings are available for the user to change.
+
+    #GUI BEHAVIOR SETTING
+    #Glogal font and size for labels
+    global_font = "tkDefaeultFont"
+    global_font_size = 10
+    #How often the GUI refreshes in seconds
+    refresh_rate = 0.5
+    #Controls paddinding for tkinter
+    global_padx = 5
+    global_pady = 5
+    #Turn on or off Group Label, 1 = ON, 0 = OFF
+    group_label_option = 1  
 
 # Application Use
 There is 3 control buttons offered in the application
@@ -62,6 +81,5 @@ Red
     Appliation is in the process of shutting down  
     ![red](/Photos/RED.png)
 
-# Working List
-Add Group Labels  
+# To Do List  
 Improve GUI Response
