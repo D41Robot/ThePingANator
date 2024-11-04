@@ -81,5 +81,9 @@ Red
     Appliation is in the process of shutting down  
     ![red](/Photos/RED.png)
 
+# Timer
+Section to be filled out with screenshots  
+
 # To Do List  
-Improve GUI Response
+Improve GUI Response  
+Timer since hitting start

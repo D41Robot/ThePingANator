@@ -1,19 +1,19 @@
 #/*******************************************************************
 #* File Name         : ThePingANator.Py
 #* Description       : Little GUI that will ping deivces and report indicator or response
-#* Version           : 0.0.2
+#* Version           : 0.1.1
 #*                    
 #* Revision History  :
-#* Date		Version    Author 			Comments
+#* Date		    Version    Author 			Comments
 #* ------------------------------------------------------------------
 # 11/03/2024	0.0.1   D41Robot        Initial Release
 # 11/03/2024    0.0.2   D41Robot        Group Labels Functioning
+# 11/03/2024    0.1.1   D41Robot        Timer added
 #
 #/******************************************************************/
 from concurrent.futures import thread
 import tkinter as tk
 import time
-from ping3 import ping, verbose_ping
 import datetime
 import threading
 import subprocess
@@ -56,7 +56,7 @@ group_label_option = 1
 #DONE WITH USER INPUTS
 
 #IDK If you want to change what it says on the top
-column_headers = ['NAME', 'ADDRESS', 'PING STATUS']
+column_headers = ['NAME', 'ADDRESS', 'PING RESPONSE']
 title_banner = ['ThePingANator']
 
 #Variables
@@ -68,6 +68,8 @@ column_headers_labels = [None] * len(column_headers)
 group_label = [None] * len(group_names)
 app_stats = [None,None,None]
 space_count = 1
+run_time = time.time()
+prev_control_state = 0
 
 #Main state machine value
 control_state = 0
@@ -101,7 +103,39 @@ def update_clock():
     
     # udpate text in clock Label
     app_stats[2].config(text=current_time)
-   
+
+#Elapsed Timer Function
+def elapsed_time(control_state):
+    global run_time
+    global prev_control_state
+    print(f"THE prev_control_state is {prev_control_state} AND THE CONTROL_STATE is {control_state}")
+    if (prev_control_state != control_state):
+        print("MADE IT INTO TIMER CONTROLS")
+        if (control_state == 1):
+            run_time = time.time()
+            print(f"SETTING run_time TO THE CURRENT TIME")
+        elif (control_state == 0):
+            run_time = 0
+        else:
+            app_stats[1].config(text="TIME ERROR", bg='red')
+    prev_control_state = control_state        
+    if (control_state == 0):
+        app_stats[1].config(text=str(time_convert(0)), bg='yellow')
+        print(f"TIME SHOULD BE SET TO 0")
+    elif (control_state == 1):
+        app_stats[1].config(text=time_convert(time.time() - run_time), bg='white')
+        print(f"TIME SHOULD BE ELAPSED TIME")
+    else:
+        app_stats[1].config(text="TIME ERROR", bg='red')
+    print("TIME FUNCTION COMPLETE")
+
+def time_convert(sec):
+  mins = sec // 60
+  sec = sec % 60
+  hours = mins // 60
+  mins = mins % 60
+  return "{0}:{1}:{2}".format(int(hours),int(mins),int(sec))     
+
 #ping fuction
 def ping_address_subprocess(address, index):
     param = '-n' if platform.system().lower() == 'windows' else '-c'
@@ -164,7 +198,8 @@ class App(tk.Tk):
                 index, status_text, color = update_queue.get()
                 my_indicator[index].config(text=status_text, bg=color)
 
-            update_clock()   
+            update_clock()
+            elapsed_time(control_state)   
             self.update()  # Update the complete GUI.
             print("Panel Loop Complete")
             time.sleep(refresh_rate)
@@ -192,20 +227,22 @@ class App(tk.Tk):
             my_indicator[x].grid(column=2, row=x+(user_inputs[x]["Group"]*1)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
 
         #App Status Stuff
-        app_stats[0] = tk.Label(master=self, text="APP STATUS", font=(global_font, global_font_size), bg='white',fg='black')
-        app_stats[0].grid(column=0,row=len(user_inputs)+len(group_names)+1, sticky=tk.W, padx=global_padx, pady=global_pady)
-        app_stats[1] = tk.Label(master=self, text="Last update time:", font=(global_font, global_font_size), bg='white',fg='black')
-        app_stats[1].grid(column=1,row=len(user_inputs)+len(group_names)+1, sticky=tk.W, padx=global_padx, pady=global_pady)
-        app_stats[2] = tk.Label(master=self, text=datetime.datetime.now().strftime("%H:%M:%S.%f"), font=(global_font, global_font_size), bg='cyan',fg='black')
-        app_stats[2].grid(column=2,row=len(user_inputs)+len(group_names)+1, sticky=tk.NS, padx=global_padx, pady=global_pady)
+        status_bar = tk.Label(master=self, text="STATUS BAR", font=(global_font, global_font_size), bg='cyan',fg='black')
+        status_bar.grid(column=0,row=len(user_inputs)+len(group_names)+1, columnspan=len(column_headers), sticky=tk.NS, padx=global_padx, pady=global_pady)
+        app_stats[0] = tk.Label(master=self, text="STATUS", font=(global_font, global_font_size), bg='white',fg='black')
+        app_stats[0].grid(column=0,row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
+        app_stats[1] = tk.Label(master=self, text="IDLE", font=(global_font, global_font_size), bg='white',fg='black')
+        app_stats[1].grid(column=1,row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
+        app_stats[2] = tk.Label(master=self, text=datetime.datetime.now().strftime("%H:%M:%S"), font=(global_font, global_font_size), bg='cyan',fg='black')
+        app_stats[2].grid(column=2,row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
         
         #Control buttons
         start_button = tk.Button(self, text="START PING", font=(global_font, global_font_size), command=start_indicators) 
-        start_button.grid(column=0, row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
+        start_button.grid(column=0, row=len(user_inputs)+len(group_names)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
         stop_button = tk.Button(self, text="STOP PING", font=(global_font, global_font_size), command=stop_indicators)   
-        stop_button.grid(column=1, row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
+        stop_button.grid(column=1, row=len(user_inputs)+len(group_names)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
         exit_button = tk.Button(self, text="EXIT", font=(global_font, global_font_size), command=exit_app) 
-        exit_button.grid(column=2, row=len(user_inputs)+len(group_names)+2, sticky=tk.NS, padx=global_padx, pady=global_pady)
+        exit_button.grid(column=2, row=len(user_inputs)+len(group_names)+3, sticky=tk.NS, padx=global_padx, pady=global_pady)
 
         #Group Labels
         if (group_label_option == 1):
