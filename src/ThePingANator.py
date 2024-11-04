@@ -41,7 +41,7 @@ user_inputs = [
 #Positions relates to Group value in user_inputs
 group_names = ['Internal', 'External']
 
-#GUI behavior settings
+#GUI BEHAVIOR SETTING
 #Glogal font and size for labels
 global_font = "tkDefaeultFont"
 global_font_size = 10
