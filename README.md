@@ -62,6 +62,5 @@ Red
     Appliation is in the process of shutting down  
     ![red](/Photos/RED.png)
 
-# Working List
-Add Group Labels  
+# Working List  
 Improve GUI Response
