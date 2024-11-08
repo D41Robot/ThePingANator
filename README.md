@@ -22,6 +22,11 @@ Groups can be used to break up the GUI with different section. Additional elemen
 # GUI Behvaior Settings
 The following settings are available for the user to change.
 
+    #USER INPUTS
+    #Group Labels
+    #Positions relates to Group value in user_inputs
+    group_names = ['Internal', 'External']
+
     #GUI BEHAVIOR SETTING
     #Glogal font and size for labels
     global_font = "tkDefaeultFont"
@@ -32,7 +37,9 @@ The following settings are available for the user to change.
     global_padx = 5
     global_pady = 5
     #Turn on or off Group Label, 1 = ON, 0 = OFF
-    group_label_option = 1  
+    group_label_option = 1
+    #Number of times until ping status turns green
+    ping_success_requirement = 3 
 
 # Application Use
 There is 3 control buttons offered in the application
@@ -82,8 +89,15 @@ Red
     ![red](/Photos/RED.png)
 
 # Timer
-Section to be filled out with screenshots  
+The timer indicates how long the application has been pinging devices and is located in the center of the STATUS BAR.  
+
+White:
+    The timer is running and counting up
+    ![green](/Photos/GREEN.png)
+
+Yello
+    The counter is stopped and reset
+    ![yellow](/Photos/YELLOW.png)
 
 # To Do List  
-Improve GUI Response  
-Timer since hitting start
+Improve GUI Response

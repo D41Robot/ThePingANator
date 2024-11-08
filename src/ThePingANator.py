@@ -1,7 +1,7 @@
 #/*******************************************************************
 #* File Name         : ThePingANator.Py
-#* Description       : Little GUI that will ping deivces and report indicator or response
-#* Version           : 0.1.1
+#* Description       : Little GUI that will ping deivces and report indicator of response
+#* Version           : 0.1.2
 #*                    
 #* Revision History  :
 #* Date		    Version    Author 			Comments
@@ -9,6 +9,7 @@
 # 11/03/2024	0.0.1   D41Robot        Initial Release
 # 11/03/2024    0.0.2   D41Robot        Group Labels Functioning
 # 11/03/2024    0.1.1   D41Robot        Timer added
+# 11/08/2024    0.1.2   D41Robot        Added success counter to ping status
 #
 #/******************************************************************/
 from concurrent.futures import thread
@@ -37,6 +38,7 @@ user_inputs = [
     }  
 ]
 
+#USER INPUTS
 #Group Labels
 #Positions relates to Group value in user_inputs
 group_names = ['Internal', 'External']
@@ -52,6 +54,8 @@ global_padx = 5
 global_pady = 5
 #Turn on or off Group Label, 1 = ON, 0 = OFF
 group_label_option = 1
+#Number of times until ping status turns green
+ping_success_requirement = 3
 
 #DONE WITH USER INPUTS
 
@@ -64,6 +68,7 @@ ping_response = [None] * len(user_inputs)
 my_indicator = [None] * len(user_inputs)
 label_addresses = [None] * len(user_inputs)
 label_names = [None] * len(user_inputs)
+response_suscess = [0] * len(user_inputs)
 column_headers_labels = [None] * len(column_headers)
 group_label = [None] * len(group_names)
 app_stats = [None,None,None]
@@ -108,12 +113,9 @@ def update_clock():
 def elapsed_time(control_state):
     global run_time
     global prev_control_state
-    print(f"THE prev_control_state is {prev_control_state} AND THE CONTROL_STATE is {control_state}")
     if (prev_control_state != control_state):
-        print("MADE IT INTO TIMER CONTROLS")
         if (control_state == 1):
             run_time = time.time()
-            print(f"SETTING run_time TO THE CURRENT TIME")
         elif (control_state == 0):
             run_time = 0
         else:
@@ -121,13 +123,10 @@ def elapsed_time(control_state):
     prev_control_state = control_state        
     if (control_state == 0):
         app_stats[1].config(text=str(time_convert(0)), bg='yellow')
-        print(f"TIME SHOULD BE SET TO 0")
     elif (control_state == 1):
         app_stats[1].config(text=time_convert(time.time() - run_time), bg='white')
-        print(f"TIME SHOULD BE ELAPSED TIME")
     else:
         app_stats[1].config(text="TIME ERROR", bg='red')
-    print("TIME FUNCTION COMPLETE")
 
 def time_convert(sec):
   mins = sec // 60
@@ -138,20 +137,44 @@ def time_convert(sec):
 
 #ping fuction
 def ping_address_subprocess(address, index):
+    global response_suscess
+    global ping_success_requirement
     param = '-n' if platform.system().lower() == 'windows' else '-c'
     command = ['ping', param, '1', address]
     
     try:
         response = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if response.returncode == 0:
-            print(f"Response from {address}: Successful")
-            update_queue.put((index, "GOOD", 'green'))
+            if int(response_suscess[index]) > ping_success_requirement :
+                print(f"Response from {address}: Successful")
+                update_queue.put((index, str(response_suscess[index]), 'green'))
+                response_suscess[index] = response_suscess[index] + 1
+            else:
+                print(f"Response from {address}: Successful")
+                update_queue.put((index, str(response_suscess[index]), 'yellow'))
+                response_suscess[index] = response_suscess[index] + 1
         else:
-            print(f"No response from {address}")
+            print(f"Response from {address}: BAD")
             update_queue.put((index, "BAD", 'red'))
+            response_suscess[index] = 0
     except Exception as e:
         print(f"Error pinging {address}: {e}")
         update_queue.put((index, "ERROR", 'orange'))
+        response_suscess[index] = 0
+
+#Updates ping status labels
+def update_ping_status():
+    while not update_queue.empty():
+        index, status_text, color = update_queue.get()
+        my_indicator[index].config(text=status_text, bg=color)
+
+#Reset the ping status label to IDLE condition
+def ping_response_reset():
+    global user_inputs
+    global response_suscess
+    for x in range(len(user_inputs)):
+        update_queue.put((x, "IDLE", 'WHITE'))
+        response_suscess[x] = 0
 
 #Group Spacing Function
 #Working, could be better
@@ -168,42 +191,39 @@ def group_row_spacing(index):
 #Main
 class App(tk.Tk):
     def __init__(self):
+        global response_suscess
         super().__init__()
 
         #Create Canvas and basic elements
         self.create_widgets()
 
         #What does everything
-        while(1):
+        while(1):                       
             if(control_state == 1):
                 for x in range(len(user_inputs)):
                     threading.Thread(target=ping_address_subprocess, args=(user_inputs[x]["Address"], x)).start()
                 print("Pinging addresses...")
                           
-            elif(control_state == 0): #Set circles back to default
-                for x in range(len(user_inputs)):
-                    my_indicator[x].config(text="IDLE", bg='white', fg='Black')
+            elif(control_state == 0): #Set ping status back to default
+                ping_response_reset()
                 print("GUI Default")
 
-            elif(control_state == 2):
+            elif(control_state == 2): #Exit the application
                 print("QUITTING FOR REAL")
                 quit()
 
-            else:
+            else: #Print statement tells all
                 print("YEET, TAKE THE WHEEL")
-                quit()
+                quit()        
 
-
-            while not update_queue.empty() and control_state == 1:
-                index, status_text, color = update_queue.get()
-                my_indicator[index].config(text=status_text, bg=color)
-
+            update_ping_status()
             update_clock()
             elapsed_time(control_state)   
             self.update()  # Update the complete GUI.
-            print("Panel Loop Complete")
+            #print("Panel Loop Complete")
             time.sleep(refresh_rate)
 
+    #Setup the GUI
     def create_widgets(self):
         #Create Canvas
         self.geometry()
@@ -250,6 +270,7 @@ class App(tk.Tk):
                 group_label[x] = tk.Label(master=self, text=group_names[x], bg='pink', fg='black')
                 group_label[x].grid(column=0, row=int(group_row_spacing(x)), columnspan=len(column_headers), sticky=tk.NS, padx=global_padx, pady=global_pady)
 
+#Kicks everything off, python magic
 if __name__ == "__main__":
     app = App()
     app.mainloop()
