@@ -92,11 +92,11 @@ Red
 The timer indicates how long the application has been pinging devices and is located in the center of the STATUS BAR.  
 
 White:
-    The timer is running and counting up
+    The timer is running and counting up  
     ![green](/Photos/GREEN.png)
 
 Yello
-    The counter is stopped and reset
+    The counter is stopped and reset  
     ![yellow](/Photos/YELLOW.png)
 
 # To Do List  
