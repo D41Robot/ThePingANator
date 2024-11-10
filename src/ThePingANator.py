@@ -1,18 +1,18 @@
 #/*******************************************************************
 #* File Name         : ThePingANator.Py
 #* Description       : Little GUI that will ping deivces and report indicator of response
-#* Version           : 0.1.2
+#* Version           : 0.1.3
 #*                    
 #* Revision History  :
 #* Date		    Version    Author 			Comments
 #* ------------------------------------------------------------------
-# 11/03/2024	0.0.1   D41Robot        Initial Release
-# 11/03/2024    0.0.2   D41Robot        Group Labels Functioning
-# 11/03/2024    0.1.1   D41Robot        Timer added
-# 11/08/2024    0.1.2   D41Robot        Added success counter to ping status
+# 11/03/2024	0.0.1      D41Robot         Initial Release
+# 11/03/2024    0.0.2      D41Robot         Group Labels Functioning
+# 11/03/2024    0.1.1      D41Robot         Timer added
+# 11/08/2024    0.1.2      D41Robot         Added success counter to ping status
+# 11/09/2024    0.1.3      D41Robot         Added ping timeout, reduce hanging threads
 #
 #/******************************************************************/
-from concurrent.futures import thread
 import tkinter as tk
 import time
 import datetime
@@ -29,26 +29,21 @@ user_inputs = [
     {
         "Name": "Router",
         "Address": "192.168.1.1",
-        "Group": 0,
+        "Group": 0
     },
     {
         "Name": "Google",
         "Address": "google.com",
-        "Group": 1,
-    }  
+        "Group": 1
+    } 
 ]
 
 #USER INPUTS
-#Group Labels
-#Positions relates to Group value in user_inputs
+#Group Labels, positions relates to Group value in user_inputs
 group_names = ['Internal', 'External']
-
-#GUI BEHAVIOR SETTING
 #Glogal font and size for labels
 global_font = "tkDefaeultFont"
 global_font_size = 10
-#How often the GUI refreshes in seconds
-refresh_rate = 0.5
 #Controls paddinding for tkinter
 global_padx = 5
 global_pady = 5
@@ -56,6 +51,10 @@ global_pady = 5
 group_label_option = 1
 #Number of times until ping status turns green
 ping_success_requirement = 3
+#How often the GUI refreshes in seconds
+refresh_rate = 1
+#How long each ping is allowed to be attempted in seconds
+ping_timeout = 1
 
 #DONE WITH USER INPUTS
 
@@ -73,11 +72,9 @@ column_headers_labels = [None] * len(column_headers)
 group_label = [None] * len(group_names)
 app_stats = [None,None,None]
 space_count = 1
-run_time = time.time()
 prev_control_state = 0
-
-#Main state machine value
 control_state = 0
+run_time = time.time()
 
 #Not 100% sure what you do but it works
 update_queue = queue.Queue()
@@ -128,6 +125,7 @@ def elapsed_time(control_state):
     else:
         app_stats[1].config(text="TIME ERROR", bg='red')
 
+#Creates time. Is gross
 def time_convert(sec):
   mins = sec // 60
   sec = sec % 60
@@ -135,22 +133,24 @@ def time_convert(sec):
   mins = mins % 60
   return "{0}:{1}:{2}".format(int(hours),int(mins),int(sec))     
 
-#ping fuction
+#Ping fuction
 def ping_address_subprocess(address, index):
     global response_suscess
     global ping_success_requirement
+    global ping_timeout
     param = '-n' if platform.system().lower() == 'windows' else '-c'
-    command = ['ping', param, '1', address]
+    param_time = str(ping_timeout) if platform.system().lower() == 'windows' else str(ping_timeout/1000)
+    command = ['ping', param, '1',"-w", param_time, address]
     
     try:
         response = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if response.returncode == 0:
             if int(response_suscess[index]) > ping_success_requirement :
-                print(f"Response from {address}: Successful")
+                print(f"Response from {address}: SUCCESS")
                 update_queue.put((index, str(response_suscess[index]), 'green'))
                 response_suscess[index] = response_suscess[index] + 1
             else:
-                print(f"Response from {address}: Successful")
+                print(f"Response from {address}: SUS SUCCESS")
                 update_queue.put((index, str(response_suscess[index]), 'yellow'))
                 response_suscess[index] = response_suscess[index] + 1
         else:
@@ -220,7 +220,6 @@ class App(tk.Tk):
             update_clock()
             elapsed_time(control_state)   
             self.update()  # Update the complete GUI.
-            #print("Panel Loop Complete")
             time.sleep(refresh_rate)
 
     #Setup the GUI

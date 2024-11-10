@@ -23,23 +23,22 @@ Groups can be used to break up the GUI with different section. Additional elemen
 The following settings are available for the user to change.
 
     #USER INPUTS
-    #Group Labels
-    #Positions relates to Group value in user_inputs
+    #Group Labels, positions relates to Group value in user_inputs
     group_names = ['Internal', 'External']
-
-    #GUI BEHAVIOR SETTING
     #Glogal font and size for labels
     global_font = "tkDefaeultFont"
     global_font_size = 10
     #How often the GUI refreshes in seconds
-    refresh_rate = 0.5
+    refresh_rate = 1
     #Controls paddinding for tkinter
     global_padx = 5
     global_pady = 5
     #Turn on or off Group Label, 1 = ON, 0 = OFF
     group_label_option = 1
     #Number of times until ping status turns green
-    ping_success_requirement = 3 
+    ping_success_requirement = 3
+    #How long each ping is allowed to be attempted in seconds
+    ping_timeout = 1
 
 # Application Use
 There is 3 control buttons offered in the application
